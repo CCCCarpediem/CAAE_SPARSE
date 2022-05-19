@@ -25,7 +25,7 @@ class C2AE():
         self.keep_prob = 0.7
         # 0.9
         self.std = 0.08
-#糖尿病有关的疾病及其病发症
+
     def gene_diabetes(self,data):
         diaarr = np.zeros([1,data.shape[1]])
         list = [25000,
@@ -156,14 +156,13 @@ class C2AE():
         self.word2id = word2id
 
     def load_data_from_true_gene_word2vec(self,):
-        # 最后的词向量嵌入用tensorflow实现
-        # 真实数据
+
         root1 = "/Users/liangyunfan/Downloads/EHR_papers_lyf/medical_data/MED_Att_multi/DIAGNOSE.npy"
         true_data = np.load(root1)
         # true_data = self.gene_diabetes(true_data)
         self.train_data_count = int(true_data.shape[0]*0.7)
         print('index size: ',true_data.shape)
-        # 载入item_code_index
+      
         root2 = "/Users/liangyunfan/Downloads/EHR_papers_lyf/medical_data/MED_Att_multi/MIMIC_CODE_INDEX.plk"
         item_code_index = pickle.load(open(root2, "rb"))
         item_code_index = dict([(value, key) for key, value in item_code_index.items()])
@@ -276,7 +275,6 @@ class C2AE():
         Sigmahat22 = 1.0/(m-1) * tf.matmul(H2bar, tf.transpose(H2bar)) + r2 * tf.eye(self.latent_size)
 
 
-        '''特征值分解算-1/2次幂'''
 
         [D1,V1] = tf.self_adjoint_eig(Sigmahat11)
         [D2,V2] = tf.self_adjoint_eig(Sigmahat22)
@@ -293,7 +291,7 @@ class C2AE():
         with tf.variable_scope('Autoencoder'):
             W_1A_Y = tf.get_variable(name ='W_1A_Y',shape = [self.latent_size, self.hidden_size[1]],initializer=tf.truncated_normal_initializer(mean=0.0,stddev=self.std,dtype=tf.float32))
             W_2A_Y = tf.get_variable(name ='W_2A_Y',shape = [self.hidden_size[1],self.label_size],initializer=tf.truncated_normal_initializer(mean=0.0,stddev=self.std,dtype=tf.float32))
-            # 此处的第三个全一矩阵用来给Y加权做到多开不如不开
+            
             W_3A_Y = tf.get_variable(name = 'weight',shape = [self.label_size,self.label_size],initializer=tf.ones_initializer(dtype=tf.float32))
             b_1A_Y = tf.get_variable(name ='b_1A_Y',shape = [self.hidden_size[1]],initializer=tf.truncated_normal_initializer(mean=0.0,stddev=self.std,dtype=tf.float32))
             b_2A_Y = tf.get_variable(name ='b_2A_Y',shape = [self.label_size],initializer=tf.truncated_normal_initializer(mean=0.0,stddev=self.std,dtype=tf.float32))
@@ -308,7 +306,7 @@ class C2AE():
         x_train, x_test, y_train, y_test = self.load_data_from_true_gene_word2vec()
 
         self.label_size = y_train.shape[1]
-        # X是索引 用tf实现词向量嵌入
+        
         # X = tf.placeholder(tf.int32, shape=[None, None])
         X = tf.placeholder(tf.int32, shape=[None, None])
         Y = tf.placeholder(tf.float32, shape=[None,self.label_size])
@@ -323,7 +321,7 @@ class C2AE():
         # embedding_size = tf.convert_to_tensor(tf.shape(embedding_x))
         # embedding_size = tf.cast(embedding_size,tf.float32)
 
-        # 最后embedding的结果是output
+      
         if self.attention is False:
             # output = embedding_x/tf.expand_dims(embedding_size,-1)
             output = tf.reduce_sum(embedding_x,1)
@@ -333,11 +331,10 @@ class C2AE():
         correlation,test1,test2 = self.compute_correlation(X_DCCA_latent,Y_DCCA_latent)
         y_pre,auto_loss = self.auto_encoder(Y_DCCA_latent,Y)
 
-        # 预测
+     
         # latent_pre,_ = self.build_DCCA(output_pre,Y_pre)
         # y_pre,_ = self.auto_encoder(latent_pre,Y_pre)
 
-        # 同时优化两个模型的参数
         Weight_loss = tf.reduce_sum(tf.nn.relu(y_pre-Y))
         C2AE_loss = (1-self.alpha)*auto_loss + self.alpha * correlation*(1e-8) + Weight_loss*(1e-6)
         # C2AE_loss = (1 - self.alpha) * auto_loss + self.alpha * correlation * (1e-8)
@@ -348,7 +345,7 @@ class C2AE():
         sess = tf.Session()
         sess.run(tf.global_variables_initializer())
 
-        # 每次选取batch大小的数据进行训练
+    
         # print(self.word_embedding)
         nbatch = int(x_train.shape[0]/self.batch_size)
         for i in range(self.epoch):
