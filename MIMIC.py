@@ -46,7 +46,7 @@ def gen_onehot():
 
     Med_num = np. array(Medicine_set).shape[0]
     print('number of medicine is: {}'.format(Med_num))
-    # 生成事件和药物的字典
+
     Med_HA_dict = {}
     hold = 0
 
@@ -77,7 +77,7 @@ def gen_onehot():
     HADM_ID = [int(i)for i in HADM_ID]
     HADM_ID_set =  [i for i in set(HADM_ID)]
     print(np.array(HADM_ID_set).shape)
-    #生成 one-hot编码
+
     PATIENT_NUM = np.array([i for i in set(SUBJECT_ID)]).shape[0]
     print('the number of patient is: {}'.format(PATIENT_NUM))
     print('the ICD occured is: {}'.format(ICD_num))
@@ -102,7 +102,7 @@ def gen_onehot():
                 add[0,ICD_CODE_dict.get(SUBJECT_ICD[x])] = 1
 
             hold = HADM_ID[x]
-        # 先取出100000条记录进行实验
+     
         # if x == 200000:
         #     break
         if x%1000==0:
